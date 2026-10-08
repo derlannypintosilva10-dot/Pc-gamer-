@@ -1,0 +1,31 @@
+name: PC Virtual Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Baixando e instalando Chrome Remote Desktop
+        run: |
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          powershell -Command "Invoke-WebRequest -Uri https://dl.google.com/remotedesktop/chromeremotedesktophost.msi -OutFile chromeremotedesktophost.msi"
+          Start-Process msiexec.exe -ArgumentList '/i chromeremotedesktophost.msi /qn' -Wait
+          Remove-Item chromeremotedesktophost.msi
+
+      - name: Configurar e Iniciar PC Virtual
+        run: |
+          # COLE AQUI O COMANDO GERADO PELO CHROME REMOTE DESKTOP
+          # Exemplo: & "C:\Program Files (x86)\Google\Chrome Remote Desktop\CURRENT_VERSION\remotedesktop_installer.exe" --start ...
+          
+      - name: Manter maquina ligada
+        run: |
+          $i = 0
+          while ($i -lt 360) {
+            Start-Sleep -Seconds 60
+            $i++
+            Write-Output "PC Virtual em execução... ($i minutos)"
+          }
+          
